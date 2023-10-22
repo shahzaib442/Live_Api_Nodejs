@@ -5,7 +5,12 @@ const app = express();
 
 const PORT = 3000
 
-app.get('/', (request, response) => {
+app.use(express.json()); // To parse JSON data
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/api/v1/', require("./Routes/Auth/AuthRoutes"))
+
+app.use('/', (request, response) => {
     response.send("Welcome to Live API");
 })
 
