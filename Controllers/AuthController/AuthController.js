@@ -1,42 +1,48 @@
-const auth = require('../../Models/AuthModel/AuthModel')
+const Auth = require('../../Models/AuthModel/AuthModel'); // Make sure to import your Mongoose model correctly
 
 const signin = (req, res) => {
     res.send("Welcome to Live API Signin");
 }
 
-const signup = async (request, response) => {
+const signup = async (req, res) => {
     // res.send("Welcome to Live API SignUp");
     try {
-        const authresponse = await auth.create({
-            email: request.body.email,
-            password: request.body.password,
-            username: request.body.username,
-            phone: request.body.phone
-        })
+        const authData = {
+            email: req.body.email,
+            password: req.body.password,
+            username: req.body.username,
+            phone: req.body.phone
+        };
 
-        if (authresponse) {
-            response.status(200).json({
-                message: 'User Login Success',
-                data: ({
-                    "message": "Success",
-                    "data": authresponse
-                })
+        const authResponse = await Auth.create(authData);
+
+        if (authResponse) {
+            res.status(201).json({
+                message: 'User Registration Success',
+                data: {
+                    message: "Success",
+                    user: authResponse
+                }
             });
         } else {
-            response.status(200).json({
-                message: 'User Login Failed',
-                data: ({
-                    "message": "Success",
-                    "data": authresponse
-                })
+            res.status(400).json({
+                message: 'User Registration Failed',
+                data: {
+                    message: "Failed",
+                    user: null
+                }
             });
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        res.status(500).json({
+            message: 'Internal Server Error',
+            error: error.message
+        });
     }
 }
 
 module.exports = {
     signin,
     signup
-}
+};
